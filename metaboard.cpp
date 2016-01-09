@@ -84,8 +84,10 @@ bool MetaBoard::checkDraw(void) const {
 void MetaBoard::set(int metarow, int metacol, int row, int col, Piece piece) {
     board[metarow][metacol].set(row, col, piece);
 
-    // Keep track of which sub-boards have been won.
-    metaboard.set(metarow, metacol, board[metarow][metacol].checkWin());
+    // Keep track of which sub-boards have been won.  If someone has already won
+    // this game, we shouldn't change it, though.
+    if (!metaboard.query(metarow, metacol)) 
+        metaboard.set(metarow, metacol, board[metarow][metacol].checkWin());
 }
 
 void MetaBoard::display(void) const {
