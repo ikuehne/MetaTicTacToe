@@ -14,15 +14,16 @@
 using namespace std;
 
 Board::Board() {
-    for (int row = 0; row < 3; row++) {
+    for (int row = 0; row < 3; row++)
         for (int col = 0; col < 3; col++)
             board[row][col] = NO_PIECE;
-    }
 }
 
 Piece Board::query(int row, int col) const {
+    // Do some bounds checking as per the documentation.
     if (row < 0 || row > 2 || col < 0 || col > 2)
         return NO_PIECE;
+
     return board[row][col];
 }
 
@@ -55,14 +56,19 @@ int Board::checkWin(void) const {
 }   
 
 bool Board::checkFull(void) const {
+    // If there is a `NO_PIECE` on the board, it is not full.
     for (int row = 0; row < 3; row++)
         for (int col = 0; col < 3; col++)
             if (board[row][col] == NO_PIECE)
                 return false;
+
+    // And otherwise it is.
     return true;
 }
 
 bool Board::checkDraw(void) const {
+    // If the board is full, then we check that nobody has won.  If the board is
+    // not full, then it is a draw.
     return checkFull()? checkWin() == 0: false;
 }
 

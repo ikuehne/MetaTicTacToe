@@ -12,17 +12,18 @@
 using namespace std;
 
 MetaBoard::MetaBoard() {
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
+    for (int row = 0; row < 3; row++)
+        for (int col = 0; col < 3; col++)
             board[row][col] = Board();
-        }
-    }
+
     metaboard = Board();
 }
 
 Piece MetaBoard::query(int metarow, int metacol, int row, int col) const {
+    // Do bounds checking as per the documentation.
     if (metarow < 0 || metarow > 2 || metacol < 0 || metacol > 2)
         return NO_PIECE;
+
     return board[metarow][metacol].query(row, col);
 }
 
@@ -51,8 +52,10 @@ int MetaBoard::checkWin(void) const {
             }
         }
 
+        // And return the corresponding player.
         if (player_1_boards > player_2_boards)
             return 1;
+
         else if (player_2_boards > player_1_boards) 
             return 2;
     }
@@ -85,25 +88,49 @@ void MetaBoard::set(int metarow, int metacol, int row, int col, Piece piece) {
     board[metarow][metacol].set(row, col, piece);
 
     // Keep track of which sub-boards have been won.  If someone has already won
-    // this game, we shouldn't change it, though.
+    // a sub-board, we shouldn't change it, though.
     if (!metaboard.query(metarow, metacol)) 
         metaboard.set(metarow, metacol, board[metarow][metacol].checkWin());
 }
 
 void MetaBoard::display(void) const {
+    // The horizontal divider within sub-boards.
     const string divider = "-------";
+
+    // The horizontal divider between sub-boards.
     const string metadivider = "+-%-%-%-+-%-%-%-+-%-%-%-+";
+
+    // Iterate over the rows of sub-boards.
     for (int metarow = 0; metarow < 3; metarow++) {
+        // For each row of sub-boards, print a `metadivider`.
         cout << metadivider << endl;
+
+        // Iterate over the rows within the sub-board.
         for (int row = 0; row < 3; row++) {
-            for (int metacol = 0; metacol < 3; metacol++) {
+
+            // Print the `dividers` for each of the three sub-boards in this
+            // row.
+            for (int metacol = 0; metacol < 3; metacol++)
                 cout << "|" << divider;
-            }
+
+            // Also print a final pipe at the end of the row, and move to the
+            // next line.
             cout << "|" << endl;
+
+            // Now that the dividers have been printed, print a row of pieces.
+
+            // First iterate over the three boards in this row.
             for (int metacol = 0; metacol < 3; metacol++) {
+                // Print a symbol between each sub-board.
                 cout << "%";
+
+                // And then iterate over the columns inside the sub-board.
                 for (int col = 0; col < 3; col++) {
+
+                    // Print a divider between each piece.
                     cout << "|";
+
+                    // Finally, print a piece.
                     switch (query(metarow, metacol, row, col)) {
                     case X_PIECE:
                         cout << "X";
@@ -116,15 +143,23 @@ void MetaBoard::display(void) const {
                         break;
                     }
                 }
+                // Print a divider after the last piece in the sub-board.
                 cout << "|";
             }
+
+            // And print a symbol after all of the sub-boards.
             cout << "%" << endl;
         }
-        for (int metacol = 0; metacol < 3; metacol++) {
+
+        // Print a series of dividers after the row of sub-boards has been
+        // printed...
+        for (int metacol = 0; metacol < 3; metacol++)
             cout << "|" << divider;
-        }
+
+        // Including a pipe to finish the line.
         cout << "|" << endl;
     }
+
+    // Print a last metadivider at the bottom of the whole metaboard.
     cout << metadivider;
 }
-
